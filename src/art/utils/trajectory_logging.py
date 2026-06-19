@@ -161,9 +161,13 @@ def read_trajectory_groups_parquet(path: str | Path) -> list[TrajectoryGroup]:
         List of TrajectoryGroup objects.
     """
     import duckdb
+    import re
 
     con = duckdb.connect(":memory:")
-    rows = con.execute(f"SELECT * FROM '{path}' ORDER BY group_index").fetchall()
+    path_str = str(path)
+    if not re.match(r'^[a-zA-Z0-9_\-./\\:]+$', path_str):
+        raise ValueError("Invalid input")
+    rows = con.execute(f"SELECT * FROM '{path_str}' ORDER BY group_index").fetchall()
     columns = [desc[0] for desc in con.description]
 
     groups_dict: dict[int, list[Trajectory]] = {}

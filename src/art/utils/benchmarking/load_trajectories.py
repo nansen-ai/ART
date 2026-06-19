@@ -163,7 +163,7 @@ async def load_trajectories(
         disable=not debug,
     ):
         try:
-            result = con.execute(f"SELECT * FROM '{file_path}'").fetchall()
+            result = con.execute("SELECT * FROM ?", [file_path]).fetchall()
             columns = [desc[0] for desc in con.description]
         except Exception as e:
             if debug:
